@@ -31,6 +31,9 @@ python3 client.py
 If you want to run the client without a server, pass `--standalone` as an additional argument.
 
 ## kijitora カスタム
+
+[English version](/README-en.md)
+
 ### デフォルトキーマップ
 
 | キー | 動作 | 詳細・用途 |
