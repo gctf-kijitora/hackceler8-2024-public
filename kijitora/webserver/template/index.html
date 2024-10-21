@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Info</title>
+    <script>
+      function fetchGameInfo() {
+        fetch('/gameinfo')
+          .then(response => response.text())
+          .then(data => {
+            document.getElementById('gameinfo').innerHTML = data;
+          });
+      }
+      setInterval(fetchGameInfo, 300);
+      addEventListener("load", fetchGameInfo);
+    </script>
+  </head>
+  <body>
+    <nav>
+      <a href="/">Top</a>
+      <a href="/objview">Object Viewer</a>
+      <a href="/objview?path=obj.game">Game</a>
+      <a href='/objview?path=kstate.arcade_game'>Arcade Game</a>
+      <a href="/objview?path=obj.game.player">Player</a>
+      <a href="/objview?path=kstate">kstate</a>
+      <a href="/objview?path=min(%5B(o%2C(o.x-obj.game.player.x)**2%2B(o.y-obj.game.player.y)**2)%20for%20o%20in%20obj.game.objects%5D%2Ckey%3Dlambda%20o%3Ao%5B1%5D)%5B0%5D">Nearest Obj</a>
+      <a href='/objview?path=%5Bo%20for%20o%20in%20obj.game.objects%20if%20o.nametype%20%3D%3D%20"Enemy"%5D'>All Enemy</a>
+    </nav>
+    <h1>Configuration</h1>
+    <form>
+      <label for="remapSelect">Key Remap:</label>
+      <select id="remapSelect" name="key_remap_name" onchange="postKeyRemap(this.value)">
+        {% for remap_file in remap_files %}
+        <option value="{{ remap_file }}" {% if remap_file == remap_default_value %}selected{% endif %}>{{ remap_file }}</option>
+        {% endfor %}
+      </select>
+      <script>
+        function postKeyRemap(value) {
+          fetch('/settings/key-remap', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key_remap_name: value })
+          });
+        }
+      </script>
+    </form>
+    <h1>Saved Replays<button onclick="fetch('/open-replay', {method: 'POST'})">Open Replay Folder</button></h1>
+    {% for replay_file in replay_files %}
+    <button onclick="postReplay('{{ replay_file }}')">{{ replay_file }}</button>
+    {% endfor %}
+    <script>
+      function postTeleport(map_name) {
+        fetch('/teleport', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ map_name })
+        });
+      }
+      function postReplay(file) {
+        fetch('/start-replay', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ replay_file: file })
+        });
+      }
+    </script>
+    <h1>Game Info</h1>
+    <div id="gameinfo"></div>
+  </body>
+</html>

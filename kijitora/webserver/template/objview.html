@@ -1,0 +1,40 @@
+<nav>
+  <a href="/">Top</a>
+  <a href="/objview">Object Viewer</a>
+  <a href="/objview?path=obj.game">Game</a>
+  <a href='/objview?path=kstate.arcade_game'>Arcade Game</a>
+  <a href="/objview?path=obj.game.player">Player</a>
+  <a href="/objview?path=kstate">kstate</a>
+  <a href="/objview?path=min(%5B(o%2C(o.x-obj.game.player.x)**2%2B(o.y-obj.game.player.y)**2)%20for%20o%20in%20obj.game.objects%5D%2Ckey%3Dlambda%20o%3Ao%5B1%5D)%5B0%5D">Nearest Obj</a>
+  <a href='/objview?path=%5Bo%20for%20o%20in%20obj.game.objects%20if%20o.nametype%20%3D%3D%20"Enemy"%5D'>All Enemy</a></nav>
+<form method="get">
+  <label for="path-input">Path(last line evaled and other lines passs to exec):</label>  <br>
+  <textarea id="path-input" name="path" rows="4" cols="50"></textarea>
+  <br>
+  <label for="reload-input">Reload Interval (seconds):</label>
+  <input id="reload-input" name="reload"/>
+  <br>
+  <button type="submit">Submit</button>
+</form>
+<div id="obj"></div>
+<script>
+function render() {
+  fetch('/objinfo' + window.location.search)
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('obj').innerHTML = html;
+    });
+}
+
+const urlParams = new URLSearchParams(window.location.search);
+const reloadTime = parseFloat(urlParams.get('reload'));
+if (reloadTime && 0.1 <= reloadTime) {
+  setInterval(() => {
+    render();
+  }, reloadTime * 1000);
+}
+render();
+
+document.getElementById('path-input').value = urlParams.get('path') || '';
+document.getElementById('reload').value = urlParams.get('reload') || '';
+</script>

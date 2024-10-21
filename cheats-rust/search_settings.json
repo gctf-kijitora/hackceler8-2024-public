@@ -1,0 +1,13 @@
+{
+  "timeout": 5,                   
+  "validate_transitions": false,  
+  "always_shift": true,           
+  "disable_shift": false,         
+  "allowed_moves": "",            
+  "heuristic_weight": 1.0,        
+  "simple_geometry": true,        
+  "state_batch_size": 256,
+  "allow_damage": false,          
+  "damage_optimization_level": 5,
+  "damage_optimization_timeout": 1
+}

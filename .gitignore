@@ -1,0 +1,4 @@
+*.pyc
+logs
+imgui.ini
+save_state
